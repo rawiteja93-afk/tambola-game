@@ -1,0 +1,2672 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tambola / Housie Digital Game</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#17152b,#30245c);
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    text-align:center;
+    padding:18px 10px;
+}
+
+header h1{
+    margin:0;
+    font-size:28px;
+}
+
+header p{
+    margin:6px 0 0;
+    color:#cfc9ed;
+}
+
+.container{
+    width:min(1100px,96%);
+    margin:auto;
+}
+
+.panel{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+h2{
+    margin-top:0;
+}
+
+button{
+    border:none;
+    border-radius:10px;
+    padding:11px 16px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    margin:5px;
+    touch-action:manipulation;
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+.primary{background:#7c5cff;color:white}
+.green{background:#22c55e;color:white}
+.red{background:#ef4444;color:white}
+.dark{background:#292341;color:white}
+.orange{background:#f59e0b;color:#17100a}
+.gold{background:#eab308;color:#17100a}
+
+.status{
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    margin:10px;
+}
+
+.last-number{
+    font-size:65px;
+    font-weight:900;
+    text-align:center;
+    margin:5px 0 15px;
+    color:#22c55e;
+}
+
+.called-board{
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:6px;
+}
+
+.called-number{
+    aspect-ratio:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#292341;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    user-select:none;
+    transition:.15s;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+}
+
+.called-number:hover{
+    background:#49406b;
+    transform:scale(1.04);
+}
+
+.called-number:active{
+    transform:scale(.90);
+}
+
+.called-number.called{
+    background:#f59e0b;
+    color:#17100a;
+}
+
+.called-number.current{
+    background:#22c55e;
+    color:white;
+    transform:scale(1.08);
+    box-shadow:0 0 15px rgba(34,197,94,.7);
+}
+
+.legend{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-top:10px;
+    color:#ddd;
+}
+
+.dot{
+    display:inline-block;
+    width:15px;
+    height:15px;
+    border-radius:4px;
+    margin-right:5px;
+    vertical-align:middle;
+}
+
+.prize-panel{
+    margin-bottom:15px;
+}
+
+.prize-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+}
+
+.prize-box{
+    background:rgba(255,255,255,.08);
+    border-radius:10px;
+    padding:10px;
+}
+
+.prize-box label{
+    display:block;
+    font-size:13px;
+    margin-bottom:5px;
+}
+
+.prize-box input{
+    width:100%;
+    padding:8px;
+    border:none;
+    border-radius:7px;
+    font-size:15px;
+}
+
+.sound-row{
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:8px;
+    margin-top:15px;
+}
+
+.stat{
+    background:rgba(255,255,255,.08);
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.stat strong{
+    display:block;
+    font-size:20px;
+    margin-top:4px;
+}
+
+.entry-ticket{
+    background:white;
+    border-radius:12px;
+    padding:8px;
+    margin-top:12px;
+    color:#111;
+}
+
+.entry-grid{
+    display:grid;
+    grid-template-columns:repeat(9,1fr);
+    border:2px solid #222;
+}
+
+.entry-cell{
+    min-height:55px;
+    border:1px solid #bbb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fafafa;
+}
+
+.entry-cell input{
+    width:100%;
+    height:55px;
+    border:none;
+    outline:none;
+    background:transparent;
+    text-align:center;
+    font-size:21px;
+    font-weight:bold;
+    color:#111;
+}
+
+.entry-cell input:focus{
+    background:#eee8ff;
+    box-shadow:inset 0 0 0 2px #7c5cff;
+}
+
+.entry-message{
+    min-height:22px;
+    margin:8px 0;
+    font-weight:bold;
+    text-align:center;
+}
+
+.ticket{
+    background:white;
+    color:#111;
+    border-radius:15px;
+    padding:12px;
+    margin-top:15px;
+}
+
+.ticket-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    color:#333;
+    margin-bottom:10px;
+}
+
+.ticket-title input{
+    font-size:18px;
+    font-weight:bold;
+    border:none;
+    border-bottom:1px solid #aaa;
+    width:55%;
+    padding:5px;
+}
+
+.ticket-grid{
+    display:grid;
+    grid-template-columns:repeat(9,1fr);
+    border:2px solid #222;
+}
+
+.cell{
+    min-height:55px;
+    border:1px solid #bbb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+    font-weight:bold;
+    cursor:pointer;
+    background:#fafafa;
+    user-select:none;
+    position:relative;
+}
+
+.cell.empty{
+    background:#eeeeee;
+    cursor:default;
+}
+
+.cell.marked{
+    background:#ef4444;
+    color:white;
+}
+
+.cell.marked::after{
+    content:"✓";
+    position:absolute;
+    font-size:28px;
+}
+
+.cell.marked span{
+    opacity:.65;
+}
+
+.ticket-actions{
+    text-align:right;
+    margin-top:8px;
+}
+
+.ticket-targets{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:10px;
+}
+
+.target{
+    padding:5px 9px;
+    border-radius:20px;
+    background:#e5e7eb;
+    color:#555;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.target.won{
+    background:#bbf7d0;
+    color:#166534;
+}
+
+.target.house{
+    background:#fef08a;
+    color:#854d0e;
+}
+
+.history{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:10px;
+}
+
+.history-number{
+    background:#f59e0b;
+    color:#17100a;
+    padding:6px 9px;
+    border-radius:7px;
+    font-weight:bold;
+}
+
+.win-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.win-box{
+    width:min(500px,95%);
+    background:linear-gradient(135deg,#30245c,#17152b);
+    border:2px solid #facc15;
+    border-radius:22px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 20px 70px rgba(0,0,0,.7);
+    animation:pop .25s ease;
+}
+
+.win-box h2{
+    font-size:36px;
+    margin:0 0 10px;
+}
+
+.win-box .winner-ticket{
+    font-size:22px;
+}
+
+.win-box .winner-prize{
+    font-size:28px;
+    font-weight:bold;
+    color:#facc15;
+    margin:12px 0;
+}
+
+@keyframes pop{
+    from{transform:scale(.7);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+.empty-message{
+    color:#bbb;
+}
+
+@media(max-width:800px){
+
+    .prize-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@media(max-width:600px){
+
+    header h1{
+        font-size:23px;
+    }
+
+    .container{
+        width:98%;
+    }
+
+    .panel{
+        padding:12px;
+    }
+
+    .called-board{
+        gap:3px;
+    }
+
+    .called-number{
+        font-size:12px;
+        border-radius:5px;
+    }
+
+    .last-number{
+        font-size:52px;
+    }
+
+    .cell{
+        min-height:43px;
+        font-size:17px;
+    }
+
+    .entry-cell{
+        min-height:43px;
+    }
+
+    .entry-cell input{
+        height:43px;
+        font-size:17px;
+    }
+
+    .ticket{
+        padding:7px;
+    }
+
+    .ticket-title{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .ticket-title input{
+        width:100%;
+    }
+
+    .ticket-actions{
+        text-align:center;
+    }
+
+    .ticket-actions button{
+        width:calc(100% - 10px);
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .prize-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    button{
+        min-height:44px;
+    }
+
+    .win-box h2{
+        font-size:29px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🎟️ Tambola / Housie</h1>
+    <p>Digital Ticket & Number Board</p>
+</header>
+
+<div class="container">
+
+<!-- NUMBER BOARD -->
+<div class="panel">
+
+    <h2>📢 Called Numbers</h2>
+
+    <div class="status">
+        Last Number
+    </div>
+
+    <div class="last-number" id="lastNumber">—</div>
+
+    <div style="text-align:center">
+
+        <button class="green" onclick="callRandomNumber()">
+            🎲 Call Next Number
+        </button>
+
+        <button class="red" onclick="undoLast()">
+            ↩ Undo Last
+        </button>
+
+        <button class="dark" onclick="resetGame()">
+            🔄 Reset Game
+        </button>
+
+    </div>
+
+    <div class="called-board" id="calledBoard"></div>
+
+    <div class="legend">
+
+        <span>
+            <span class="dot" style="background:#f59e0b"></span>
+            Called
+        </span>
+
+        <span>
+            <span class="dot" style="background:#22c55e"></span>
+            Last called
+        </span>
+
+        <span>
+            📱 <b>Tap the number the host calls</b>
+            → it will automatically mark your ticket
+        </span>
+
+    </div>
+
+    <h3>📜 Call History</h3>
+
+    <div class="history" id="history"></div>
+
+</div>
+
+
+<!-- STATISTICS -->
+<div class="panel">
+
+    <h2>📊 Game Statistics</h2>
+
+    <div class="stats">
+
+        <div class="stat">
+            Numbers Called
+            <strong id="statCalled">0 / 90</strong>
+        </div>
+
+        <div class="stat">
+            Jaldi 5
+            <strong id="statJaldi">0</strong>
+        </div>
+
+        <div class="stat">
+            First Row
+            <strong id="statRow1">0</strong>
+        </div>
+
+        <div class="stat">
+            Second Row
+            <strong id="statRow2">0</strong>
+        </div>
+
+        <div class="stat">
+            Third Row
+            <strong id="statRow3">0</strong>
+        </div>
+
+        <div class="stat">
+            Full House
+            <strong id="statHouse">0</strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PRIZES -->
+<div class="panel prize-panel">
+
+    <h2>🏆 Winning Targets & Prizes</h2>
+
+    <div class="prize-grid">
+
+        <div class="prize-box">
+            <label>Jaldi 5 Prize (₹)</label>
+            <input id="prizeJaldi5" type="number" min="0" value="500">
+        </div>
+
+        <div class="prize-box">
+            <label>First Row Prize (₹)</label>
+            <input id="prizeRow1" type="number" min="0" value="300">
+        </div>
+
+        <div class="prize-box">
+            <label>Second Row Prize (₹)</label>
+            <input id="prizeRow2" type="number" min="0" value="300">
+        </div>
+
+        <div class="prize-box">
+            <label>Third Row Prize (₹)</label>
+            <input id="prizeRow3" type="number" min="0" value="300">
+        </div>
+
+        <div class="prize-box">
+            <label>Full House Prize (₹)</label>
+            <input id="prizeHouse" type="number" min="0" value="1000">
+        </div>
+
+    </div>
+
+    <div class="sound-row">
+
+        <button class="dark" id="soundButton" onclick="toggleSound()">
+            🔊 Sound ON
+        </button>
+
+        <button class="primary" onclick="saveData()">
+            💾 Save Game
+        </button>
+
+        <button class="primary" onclick="loadData()">
+            📂 Load Game
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- TICKET CREATOR -->
+<div class="panel">
+
+    <h2>➕ Add Your Ticket</h2>
+
+    <p>
+        Enter a standard Tambola ticket using the
+        <b>3 × 9</b> grid.
+        Each row must contain exactly <b>5 numbers</b>.
+    </p>
+
+    <div class="entry-ticket">
+
+        <div class="entry-grid" id="entryGrid"></div>
+
+    </div>
+
+    <div class="entry-message" id="entryMessage"></div>
+
+    <div style="text-align:center">
+
+        <button class="primary" onclick="addTicket()">
+            ➕ Create Ticket
+        </button>
+
+        <button class="dark" onclick="clearEntry()">
+            🧹 Clear
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- TICKETS -->
+<div class="panel">
+
+    <h2>🎟️ My Tickets</h2>
+
+    <div id="tickets"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let calledNumbers = [];
+let tickets = [];
+let ticketCounter = 1;
+
+let soundEnabled = true;
+
+let winners = {
+    jaldi5:new Set(),
+    row1:new Set(),
+    row2:new Set(),
+    row3:new Set(),
+    house:new Set()
+};
+
+let audioContext = null;
+
+
+/* =========================
+   AUDIO
+========================= */
+
+function initAudio(){
+
+    const AudioCtx =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+    if(!AudioCtx) return;
+
+    if(!audioContext){
+        audioContext = new AudioCtx();
+    }
+
+    if(audioContext.state === "suspended"){
+        audioContext.resume();
+    }
+}
+
+
+function playTone(
+    frequency,
+    duration=.15,
+    type="sine",
+    volume=.05,
+    delay=0
+){
+
+    if(!soundEnabled) return;
+
+    initAudio();
+
+    if(!audioContext) return;
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    const start =
+        audioContext.currentTime + delay;
+
+    oscillator.type = type;
+    oscillator.frequency.value = frequency;
+
+    gain.gain.setValueAtTime(.0001,start);
+
+    gain.gain.exponentialRampToValueAtTime(
+        volume,
+        start+.01
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .0001,
+        start+duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start(start);
+
+    oscillator.stop(
+        start+duration+.03
+    );
+}
+
+
+function playCallSound(){
+
+    playTone(520,.10,"sine",.035);
+    playTone(700,.12,"sine",.035,.08);
+
+}
+
+
+function playWinningSound(type){
+
+    const notes =
+        type === "house"
+        ? [523,659,784,1047,1318]
+        : [523,659,784,988];
+
+    notes.forEach(
+        (frequency,index)=>{
+            playTone(
+                frequency,
+                .20,
+                "triangle",
+                .07,
+                index*.10
+            );
+        }
+    );
+}
+
+
+function speakNumber(number){
+
+    if(
+        !soundEnabled ||
+        !("speechSynthesis" in window)
+    ){
+        return;
+    }
+
+    speechSynthesis.cancel();
+
+    const speech =
+        new SpeechSynthesisUtterance(
+            String(number)
+        );
+
+    speech.rate=.85;
+    speech.pitch=1;
+    speech.volume=.9;
+
+    speechSynthesis.speak(speech);
+}
+
+
+function toggleSound(){
+
+    soundEnabled=!soundEnabled;
+
+    document.getElementById("soundButton")
+        .textContent =
+        soundEnabled
+        ? "🔊 Sound ON"
+        : "🔇 Sound OFF";
+
+    if(
+        !soundEnabled &&
+        "speechSynthesis" in window
+    ){
+        speechSynthesis.cancel();
+    }
+
+    saveData();
+
+}
+
+
+/* =========================
+   NUMBER BOARD
+========================= */
+
+function createBoard(){
+
+    const board =
+        document.getElementById("calledBoard");
+
+    board.innerHTML="";
+
+    for(let n=1;n<=90;n++){
+
+        const div =
+            document.createElement("div");
+
+        div.className="called-number";
+
+        div.textContent=n;
+
+        div.id="number-"+n;
+
+        /*
+           IMPORTANT:
+           Every number can be tapped manually.
+
+           If the host says 47:
+           tap 47 -> callNumber(47)
+        */
+
+        div.onclick=()=>{
+            initAudio();
+            clickCalledNumber(n);
+        };
+
+        board.appendChild(div);
+    }
+
+    updateBoard();
+}
+
+
+/* =========================
+   UPDATE BOARD
+========================= */
+
+function updateBoard(){
+
+    for(let n=1;n<=90;n++){
+
+        const el =
+            document.getElementById(
+                "number-"+n
+            );
+
+        if(!el) continue;
+
+        el.classList.remove(
+            "called",
+            "current"
+        );
+
+        if(calledNumbers.includes(n)){
+
+            el.classList.add("called");
+
+        }
+
+    }
+
+    if(calledNumbers.length){
+
+        const last =
+            calledNumbers[
+                calledNumbers.length-1
+            ];
+
+        document.getElementById(
+            "lastNumber"
+        ).textContent=last;
+
+        const lastElement =
+            document.getElementById(
+                "number-"+last
+            );
+
+        if(lastElement){
+
+            lastElement.classList.add(
+                "current"
+            );
+
+        }
+
+    }else{
+
+        document.getElementById(
+            "lastNumber"
+        ).textContent="—";
+
+    }
+
+    updateHistory();
+    updateStats();
+}
+
+
+/* =========================
+   CORE CALL FUNCTION
+========================= */
+
+/*
+   THIS IS THE MAIN FIX.
+
+   The player does NOT need to press
+   "Mark All Called".
+
+   Host calls a number.
+   Player taps that number.
+
+   Example:
+
+   Host: "47"
+
+   Player taps 47.
+
+   Result:
+   1. 47 becomes called.
+   2. 47 becomes the last number.
+   3. Sound plays.
+   4. Voice says 47.
+   5. Every 47 on every ticket is marked.
+   6. Winning targets are checked.
+*/
+
+function callNumber(number){
+
+    number=Number(number);
+
+    if(number<1 || number>90){
+        return;
+    }
+
+    /*
+       Do not call the same number twice.
+    */
+
+    if(calledNumbers.includes(number)){
+        return;
+    }
+
+    initAudio();
+
+    /*
+       Add the number to the called list.
+    */
+
+    calledNumbers.push(number);
+
+    /*
+       Update the number board immediately.
+    */
+
+    updateBoard();
+
+    /*
+       Play sound and voice.
+    */
+
+    playCallSound();
+
+    speakNumber(number);
+
+    /*
+       AUTOMATIC TICKET MARKING
+    */
+
+    tickets.forEach(ticket=>{
+
+        if(!Array.isArray(ticket.marked)){
+            ticket.marked=[];
+        }
+
+        ticket.numbers.forEach(
+            (numberInTicket,index)=>{
+
+                /*
+                   If the called number is on
+                   this ticket, automatically mark it.
+                */
+
+                if(
+                    Number(numberInTicket)===number &&
+                    !ticket.marked.includes(index)
+                ){
+
+                    ticket.marked.push(index);
+
+                }
+
+            }
+        );
+
+        /*
+           Check Jaldi 5,
+           First Row,
+           Second Row,
+           Third Row,
+           Full House.
+        */
+
+        checkWinningTargets(ticket);
+
+    });
+
+    /*
+       Show the automatic marks.
+    */
+
+    renderTickets();
+
+    /*
+       Save everything.
+    */
+
+    saveData();
+
+}
+
+
+/* =========================
+   MANUAL NUMBER TAP
+========================= */
+
+function clickCalledNumber(number){
+
+    /*
+       IMPORTANT:
+
+       The first tap on an uncalled number
+       IS the call.
+
+       Example:
+
+       Host calls 63
+       ↓
+       Player taps 63
+       ↓
+       63 becomes called
+       ↓
+       63 automatically marks the ticket
+    */
+
+    if(!calledNumbers.includes(number)){
+
+        callNumber(number);
+
+        return;
+
+    }
+
+    /*
+       If already called, don't call again.
+
+       This prevents duplicate calls.
+    */
+
+}
+
+
+/* =========================
+   RANDOM CALL
+========================= */
+
+function callRandomNumber(){
+
+    const remaining=[];
+
+    for(let n=1;n<=90;n++){
+
+        if(!calledNumbers.includes(n)){
+            remaining.push(n);
+        }
+
+    }
+
+    if(!remaining.length){
+
+        alert(
+            "All 90 numbers have been called!"
+        );
+
+        return;
+    }
+
+    const n =
+        remaining[
+            Math.floor(
+                Math.random()*remaining.length
+            )
+        ];
+
+    /*
+       Random call uses the SAME function.
+
+       Therefore random calling also
+       automatically marks ticket numbers.
+    */
+
+    callNumber(n);
+
+}
+
+
+/* =========================
+   UNDO LAST
+========================= */
+
+function undoLast(){
+
+    if(!calledNumbers.length){
+        return;
+    }
+
+    /*
+       Remove last called number.
+    */
+
+    const removed =
+        calledNumbers.pop();
+
+    /*
+       IMPORTANT:
+
+       Undoing a call also removes the
+       automatic mark caused by that call.
+
+       We rebuild ticket marks from the
+       remaining called numbers.
+    */
+
+    tickets.forEach(ticket=>{
+
+        ticket.marked=[];
+
+        ticket.wins={
+            jaldi5:false,
+            row1:false,
+            row2:false,
+            row3:false,
+            house:false
+        };
+
+        ticket.numbers.forEach(
+            (number,index)=>{
+
+                if(
+                    number!==0 &&
+                    calledNumbers.includes(number)
+                ){
+
+                    ticket.marked.push(index);
+
+                }
+
+            }
+        );
+
+    });
+
+    updateBoard();
+
+    renderTickets();
+
+    saveData();
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function updateHistory(){
+
+    const history =
+        document.getElementById("history");
+
+    history.innerHTML="";
+
+    [...calledNumbers]
+        .reverse()
+        .forEach((number,index)=>{
+
+            const span =
+                document.createElement("span");
+
+            span.className="history-number";
+
+            span.textContent=number;
+
+            if(index===0){
+
+                span.style.outline=
+                    "2px solid #22c55e";
+
+            }
+
+            history.appendChild(span);
+
+        });
+
+}
+
+
+/* =========================
+   TICKET ENTRY
+========================= */
+
+function createTicketEntry(){
+
+    const grid =
+        document.getElementById("entryGrid");
+
+    grid.innerHTML="";
+
+    for(let i=0;i<27;i++){
+
+        const cell =
+            document.createElement("div");
+
+        cell.className="entry-cell";
+
+        const input =
+            document.createElement("input");
+
+        input.type="text";
+
+        input.inputMode="numeric";
+
+        input.maxLength=2;
+
+        input.dataset.index=i;
+
+        input.addEventListener(
+            "input",
+            function(){
+
+                this.value =
+                    this.value.replace(
+                        /[^0-9]/g,
+                        ""
+                    );
+
+                if(this.value.length===2){
+
+                    focusEntryCell(i+1);
+
+                }
+
+            }
+        );
+
+        input.addEventListener(
+            "keydown",
+            function(event){
+
+                let target=i;
+
+                if(event.key==="ArrowRight"){
+                    target=i+1;
+                }
+
+                if(event.key==="ArrowLeft"){
+                    target=i-1;
+                }
+
+                if(event.key==="ArrowDown"){
+                    target=i+9;
+                }
+
+                if(event.key==="ArrowUp"){
+                    target=i-9;
+                }
+
+                if(event.key==="Enter"){
+                    target=i+1;
+                }
+
+                if(target!==i){
+
+                    event.preventDefault();
+
+                    focusEntryCell(target);
+
+                }
+
+            }
+        );
+
+        cell.appendChild(input);
+
+        grid.appendChild(cell);
+
+    }
+
+}
+
+
+function focusEntryCell(index){
+
+    if(index<0 || index>=27){
+        return;
+    }
+
+    const input =
+        document.querySelector(
+            '#entryGrid input[data-index="'+
+            index+'"]'
+        );
+
+    if(input){
+
+        input.focus();
+        input.select();
+
+    }
+
+}
+
+
+function getEntryValues(){
+
+    const inputs =
+        document.querySelectorAll(
+            "#entryGrid input"
+        );
+
+    return Array.from(inputs).map(
+        input =>
+            input.value.trim()===""
+            ? 0
+            : Number(input.value)
+    );
+
+}
+
+
+function clearEntry(){
+
+    document
+        .querySelectorAll("#entryGrid input")
+        .forEach(input=>{
+            input.value="";
+        });
+
+    setEntryMessage("");
+
+}
+
+
+function setEntryMessage(
+    message,
+    error=false
+){
+
+    const element =
+        document.getElementById(
+            "entryMessage"
+        );
+
+    element.textContent=message;
+
+    element.style.color =
+        error
+        ? "#ff8a8a"
+        : "#86efac";
+
+}
+
+
+/* =========================
+   TICKET VALIDATION
+========================= */
+
+function validateTicket(nums){
+
+    if(nums.length!==27){
+
+        return {
+            valid:false,
+            message:
+                "Ticket must contain 27 cells."
+        };
+
+    }
+
+    let total=0;
+
+    const used=new Set();
+
+    for(let row=0;row<3;row++){
+
+        let count=0;
+
+        for(let col=0;col<9;col++){
+
+            const index =
+                row*9+col;
+
+            const n=Number(nums[index]);
+
+            if(n!==0){
+
+                count++;
+                total++;
+
+                if(n<1 || n>90){
+
+                    return {
+                        valid:false,
+                        message:
+                            "Numbers must be between 1 and 90."
+                    };
+
+                }
+
+                if(used.has(n)){
+
+                    return {
+                        valid:false,
+                        message:
+                            "Duplicate number "+n+
+                            " is not allowed."
+                    };
+
+                }
+
+                used.add(n);
+
+                const min =
+                    col===0
+                    ? 1
+                    : col*10;
+
+                const max =
+                    col===0
+                    ? 9
+                    : col===8
+                    ? 90
+                    : col*10+9;
+
+                if(n<min || n>max){
+
+                    return {
+                        valid:false,
+                        message:
+                            "Number "+n+
+                            " is in the wrong column."
+                    };
+
+                }
+
+            }
+
+        }
+
+        if(count!==5){
+
+            return {
+                valid:false,
+                message:
+                    "Every row must contain exactly 5 numbers."
+            };
+
+        }
+
+    }
+
+    if(total!==15){
+
+        return {
+            valid:false,
+            message:
+                "Ticket must contain exactly 15 numbers."
+        };
+
+    }
+
+    /*
+       Standard Tambola column ordering.
+    */
+
+    for(let col=0;col<9;col++){
+
+        let previous=0;
+
+        for(let row=0;row<3;row++){
+
+            const n =
+                Number(
+                    nums[row*9+col]
+                );
+
+            if(n!==0){
+
+                if(
+                    previous!==0 &&
+                    n<=previous
+                ){
+
+                    return {
+                        valid:false,
+                        message:
+                            "Numbers in each column must be ascending."
+                    };
+
+                }
+
+                previous=n;
+
+            }
+
+        }
+
+    }
+
+    return {
+        valid:true
+    };
+
+}
+
+
+/* =========================
+   ADD TICKET
+========================= */
+
+function addTicket(){
+
+    const nums =
+        getEntryValues();
+
+    const validation =
+        validateTicket(nums);
+
+    if(!validation.valid){
+
+        setEntryMessage(
+            "❌ "+validation.message,
+            true
+        );
+
+        return;
+    }
+
+    const ticket={
+
+        id:ticketCounter,
+
+        name:"Ticket "+ticketCounter,
+
+        numbers:nums,
+
+        marked:[],
+
+        wins:{
+            jaldi5:false,
+            row1:false,
+            row2:false,
+            row3:false,
+            house:false
+        }
+
+    };
+
+    ticketCounter++;
+
+    tickets.push(ticket);
+
+    clearEntry();
+
+    renderTickets();
+
+    saveData();
+
+    setEntryMessage(
+        "✅ Ticket created successfully."
+    );
+
+}
+
+
+/* =========================
+   WINNING LOGIC
+========================= */
+
+function getMarkedCount(ticket){
+
+    return ticket.numbers.filter(
+        (number,index)=>
+            number!==0 &&
+            ticket.marked.includes(index)
+    ).length;
+
+}
+
+
+function checkWinningTargets(ticket){
+
+    if(!ticket.wins){
+
+        ticket.wins={
+            jaldi5:false,
+            row1:false,
+            row2:false,
+            row3:false,
+            house:false
+        };
+
+    }
+
+    const markedCount =
+        getMarkedCount(ticket);
+
+
+    /*
+       JALDI 5
+    */
+
+    if(
+        markedCount>=5 &&
+        !ticket.wins.jaldi5
+    ){
+
+        ticket.wins.jaldi5=true;
+
+        announceWinner(
+            "JALDI 5!",
+            ticket,
+            getPrize("prizeJaldi5"),
+            "jaldi5"
+        );
+
+    }
+
+
+    const rows=[
+
+        [0,1,2,3,4,5,6,7,8],
+
+        [9,10,11,12,13,14,15,16,17],
+
+        [18,19,20,21,22,23,24,25,26]
+
+    ];
+
+
+    const rowNames=[
+        "FIRST ROW!",
+        "SECOND ROW!",
+        "THIRD ROW!"
+    ];
+
+
+    const rowKeys=[
+        "row1",
+        "row2",
+        "row3"
+    ];
+
+
+    const prizeIds=[
+        "prizeRow1",
+        "prizeRow2",
+        "prizeRow3"
+    ];
+
+
+    rows.forEach(
+        (row,index)=>{
+
+            const numbers =
+                row
+                .map(i=>ticket.numbers[i])
+                .filter(n=>n!==0);
+
+
+            const actuallyComplete =
+                numbers.length===5 &&
+                numbers.every(
+                    number=>{
+
+                        const position =
+                            ticket.numbers.indexOf(
+                                number
+                            );
+
+                        return ticket.marked.includes(
+                            position
+                        );
+
+                    }
+                );
+
+
+            if(
+                actuallyComplete &&
+                !ticket.wins[rowKeys[index]]
+            ){
+
+                ticket.wins[rowKeys[index]]=true;
+
+                announceWinner(
+                    rowNames[index],
+                    ticket,
+                    getPrize(
+                        prizeIds[index]
+                    ),
+                    rowKeys[index]
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+       FULL HOUSE
+    */
+
+    if(
+        markedCount===15 &&
+        !ticket.wins.house
+    ){
+
+        ticket.wins.house=true;
+
+        announceWinner(
+            "FULL HOUSE! 👑",
+            ticket,
+            getPrize("prizeHouse"),
+            "house"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   PRIZES
+========================= */
+
+function getPrize(id){
+
+    const input =
+        document.getElementById(id);
+
+    const value =
+        Number(input.value);
+
+    return Number.isFinite(value) &&
+           value>=0
+           ? value
+           : 0;
+
+}
+
+
+function formatMoney(value){
+
+    return Number(value)
+        .toLocaleString(
+            "en-IN",
+            {
+                maximumFractionDigits:0
+            }
+        );
+
+}
+
+
+/* =========================
+   WINNER POPUP
+========================= */
+
+function announceWinner(
+    title,
+    ticket,
+    prize,
+    type
+){
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.className="win-overlay";
+
+    const box =
+        document.createElement("div");
+
+    box.className="win-box";
+
+    box.innerHTML=`
+
+        <h2>🏆 ${title}</h2>
+
+        <div class="winner-ticket">
+            ${escapeHTML(ticket.name)}
+        </div>
+
+        <div class="winner-prize">
+            Prize: ₹${formatMoney(prize)}
+        </div>
+
+        <button class="gold">
+            🎉 Continue Game
+        </button>
+
+    `;
+
+    overlay.appendChild(box);
+
+    document.body.appendChild(overlay);
+
+    box.querySelector("button")
+        .onclick=()=>{
+            overlay.remove();
+        };
+
+    playWinningSound(type);
+
+}
+
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(
+            /[&<>"']/g,
+            character=>({
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+            }[character])
+        );
+
+}
+
+
+/* =========================
+   TICKET RENDERING
+========================= */
+
+function renderTickets(){
+
+    const container =
+        document.getElementById(
+            "tickets"
+        );
+
+    container.innerHTML="";
+
+
+    if(!tickets.length){
+
+        container.innerHTML=
+            '<p class="empty-message">'+
+            'No tickets added yet.'+
+            '</p>';
+
+        updateStats();
+
+        return;
+
+    }
+
+
+    tickets.forEach(
+        (ticket,ticketIndex)=>{
+
+            if(!Array.isArray(ticket.marked)){
+                ticket.marked=[];
+            }
+
+            if(!ticket.wins){
+
+                ticket.wins={
+                    jaldi5:false,
+                    row1:false,
+                    row2:false,
+                    row3:false,
+                    house:false
+                };
+
+            }
+
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className="ticket";
+
+
+            const title =
+                document.createElement("div");
+
+            title.className="ticket-title";
+
+
+            const nameInput =
+                document.createElement("input");
+
+            nameInput.value=ticket.name;
+
+            nameInput.oninput=()=>{
+
+                ticket.name=
+                    nameInput.value;
+
+                saveData();
+
+            };
+
+
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.className="red";
+
+            deleteButton.textContent=
+                "Delete";
+
+
+            deleteButton.onclick=()=>{
+
+                if(
+                    confirm(
+                        "Delete "+ticket.name+"?"
+                    )
+                ){
+
+                    tickets.splice(
+                        ticketIndex,
+                        1
+                    );
+
+                    renderTickets();
+
+                    saveData();
+
+                }
+
+            };
+
+
+            title.appendChild(
+                nameInput
+            );
+
+            title.appendChild(
+                deleteButton
+            );
+
+            wrapper.appendChild(title);
+
+
+            const grid =
+                document.createElement("div");
+
+            grid.className="ticket-grid";
+
+
+            ticket.numbers.forEach(
+                (number,index)=>{
+
+                    const cell =
+                        document.createElement("div");
+
+
+                    if(number===0){
+
+                        cell.className=
+                            "cell empty";
+
+                    }else{
+
+                        cell.className="cell";
+
+
+                        const span =
+                            document.createElement(
+                                "span"
+                            );
+
+                        span.textContent=number;
+
+                        cell.appendChild(span);
+
+
+                        /*
+                           Manual ticket tapping still works.
+
+                           This allows you to correct a mark
+                           manually if required.
+                        */
+
+                        cell.onclick=()=>{
+
+                            if(
+                                ticket.marked
+                                .includes(index)
+                            ){
+
+                                ticket.marked=
+                                    ticket.marked
+                                    .filter(
+                                        x=>x!==index
+                                    );
+
+                            }else{
+
+                                ticket.marked.push(
+                                    index
+                                );
+
+                            }
+
+                            checkWinningTargets(
+                                ticket
+                            );
+
+                            renderTickets();
+
+                            saveData();
+
+                        };
+
+                    }
+
+
+                    if(
+                        ticket.marked
+                        .includes(index)
+                    ){
+
+                        cell.classList.add(
+                            "marked"
+                        );
+
+                    }
+
+
+                    grid.appendChild(cell);
+
+                }
+            );
+
+
+            wrapper.appendChild(grid);
+
+
+            /*
+               Winning badges
+            */
+
+            const targets =
+                document.createElement("div");
+
+            targets.className=
+                "ticket-targets";
+
+
+            const badgeData=[
+
+                [
+                    "Jaldi 5",
+                    ticket.wins.jaldi5,
+                    false
+                ],
+
+                [
+                    "First Row",
+                    ticket.wins.row1,
+                    false
+                ],
+
+                [
+                    "Second Row",
+                    ticket.wins.row2,
+                    false
+                ],
+
+                [
+                    "Third Row",
+                    ticket.wins.row3,
+                    false
+                ],
+
+                [
+                    "Full House",
+                    ticket.wins.house,
+                    true
+                ]
+
+            ];
+
+
+            badgeData.forEach(
+                data=>{
+
+                    const badge =
+                        document.createElement(
+                            "span"
+                        );
+
+                    badge.className=
+                        "target";
+
+                    if(data[1]){
+
+                        badge.classList.add(
+                            "won"
+                        );
+
+                    }
+
+                    if(data[2]){
+
+                        badge.classList.add(
+                            "house"
+                        );
+
+                    }
+
+                    badge.textContent =
+                        data[1]
+                        ? "✓ "+data[0]
+                        : data[0];
+
+                    targets.appendChild(
+                        badge
+                    );
+
+                }
+            );
+
+
+            wrapper.appendChild(
+                targets
+            );
+
+
+            /*
+               Optional manual controls.
+            */
+
+            const actions =
+                document.createElement("div");
+
+            actions.className=
+                "ticket-actions";
+
+
+            const markCalled =
+                document.createElement("button");
+
+            markCalled.className="green";
+
+            markCalled.textContent=
+                "✓ Mark All Called";
+
+
+            markCalled.onclick=()=>{
+
+                ticket.numbers.forEach(
+                    (number,index)=>{
+
+                        if(
+                            number!==0 &&
+                            calledNumbers.includes(
+                                number
+                            )
+                        ){
+
+                            if(
+                                !ticket.marked
+                                .includes(index)
+                            ){
+
+                                ticket.marked.push(
+                                    index
+                                );
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+                checkWinningTargets(
+                    ticket
+                );
+
+                renderTickets();
+
+                saveData();
+
+            };
+
+
+            const clearMarks =
+                document.createElement("button");
+
+            clearMarks.className="dark";
+
+            clearMarks.textContent=
+                "Clear Marks";
+
+
+            clearMarks.onclick=()=>{
+
+                ticket.marked=[];
+
+                renderTickets();
+
+                saveData();
+
+            };
+
+
+            actions.appendChild(
+                markCalled
+            );
+
+            actions.appendChild(
+                clearMarks
+            );
+
+            wrapper.appendChild(
+                actions
+            );
+
+
+            container.appendChild(
+                wrapper
+            );
+
+        }
+    );
+
+
+    updateStats();
+
+}
+
+
+/* =========================
+   STATISTICS
+========================= */
+
+function updateStats(){
+
+    document.getElementById(
+        "statCalled"
+    ).textContent =
+        calledNumbers.length+
+        " / 90";
+
+
+    const categories=[
+
+        ["jaldi5","statJaldi"],
+
+        ["row1","statRow1"],
+
+        ["row2","statRow2"],
+
+        ["row3","statRow3"],
+
+        ["house","statHouse"]
+
+    ];
+
+
+    categories.forEach(
+        ([key,id])=>{
+
+            let count=0;
+
+            tickets.forEach(
+                ticket=>{
+
+                    if(
+                        ticket.wins &&
+                        ticket.wins[key]
+                    ){
+
+                        count++;
+
+                    }
+
+                }
+            );
+
+            document.getElementById(
+                id
+            ).textContent=count;
+
+        }
+    );
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetGame(){
+
+    if(
+        !confirm(
+            "Start a new game?\n\n"+
+            "All called numbers and ticket "+
+            "marks will be cleared.\n\n"+
+            "Your tickets and prizes will remain."
+        )
+    ){
+
+        return;
+
+    }
+
+
+    calledNumbers=[];
+
+
+    tickets.forEach(
+        ticket=>{
+
+            ticket.marked=[];
+
+            ticket.wins={
+                jaldi5:false,
+                row1:false,
+                row2:false,
+                row3:false,
+                house:false
+            };
+
+        }
+    );
+
+
+    winners={
+        jaldi5:new Set(),
+        row1:new Set(),
+        row2:new Set(),
+        row3:new Set(),
+        house:new Set()
+    };
+
+
+    updateBoard();
+
+    renderTickets();
+
+    saveData();
+
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function saveData(){
+
+    const data={
+
+        calledNumbers,
+
+        tickets,
+
+        ticketCounter,
+
+        soundEnabled,
+
+        prizes:{
+
+            jaldi5:getPrize("prizeJaldi5"),
+
+            row1:getPrize("prizeRow1"),
+
+            row2:getPrize("prizeRow2"),
+
+            row3:getPrize("prizeRow3"),
+
+            house:getPrize("prizeHouse")
+
+        }
+
+    };
+
+
+    localStorage.setItem(
+        "tambolaGame",
+        JSON.stringify(data)
+    );
+
+}
+
+
+/* =========================
+   LOAD
+========================= */
+
+function loadData(){
+
+    const saved =
+        localStorage.getItem(
+            "tambolaGame"
+        );
+
+
+    if(!saved){
+
+        updateBoard();
+
+        renderTickets();
+
+        return;
+
+    }
+
+
+    try{
+
+        const data=
+            JSON.parse(saved);
+
+
+        calledNumbers=
+            Array.isArray(
+                data.calledNumbers
+            )
+            ? data.calledNumbers
+            : [];
+
+
+        tickets=
+            Array.isArray(data.tickets)
+            ? data.tickets
+            : [];
+
+
+        ticketCounter=
+            data.ticketCounter ||
+            (
+                tickets.length
+                ? Math.max(
+                    ...tickets.map(
+                        t=>Number(t.id)||0
+                    )
+                )+1
+                : 1
+            );
+
+
+        if(
+            typeof data.soundEnabled
+            ==="boolean"
+        ){
+
+            soundEnabled=
+                data.soundEnabled;
+
+        }
+
+
+        if(data.prizes){
+
+            document.getElementById(
+                "prizeJaldi5"
+            ).value=
+                data.prizes.jaldi5 ?? 500;
+
+            document.getElementById(
+                "prizeRow1"
+            ).value=
+                data.prizes.row1 ?? 300;
+
+            document.getElementById(
+                "prizeRow2"
+            ).value=
+                data.prizes.row2 ?? 300;
+
+            document.getElementById(
+                "prizeRow3"
+            ).value=
+                data.prizes.row3 ?? 300;
+
+            document.getElementById(
+                "prizeHouse"
+            ).value=
+                data.prizes.house ?? 1000;
+
+        }
+
+
+        document.getElementById(
+            "soundButton"
+        ).textContent=
+            soundEnabled
+            ? "🔊 Sound ON"
+            : "🔇 Sound OFF";
+
+
+        tickets.forEach(
+            ticket=>{
+
+                if(!Array.isArray(ticket.marked)){
+                    ticket.marked=[];
+                }
+
+                if(!ticket.wins){
+
+                    ticket.wins={
+                        jaldi5:false,
+                        row1:false,
+                        row2:false,
+                        row3:false,
+                        house:false
+                    };
+
+                }
+
+            }
+        );
+
+
+        updateBoard();
+
+        renderTickets();
+
+
+    }catch(error){
+
+        console.error(
+            "Could not load game:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================
+   AUTOMATIC SAVE
+========================= */
+
+setInterval(
+    saveData,
+    3000
+);
+
+
+/* =========================
+   START
+========================= */
+
+createTicketEntry();
+
+createBoard();
+
+loadData();
+
+renderTickets();
+
+
+document.addEventListener(
+    "click",
+    initAudio,
+    {once:true}
+);
+
+</script>
+
+</body>
+</html>
+```
